@@ -8,11 +8,34 @@ const {
 const { formatDates, formatComments, makeRefObj } = require('../utils/utils');
 
 exports.seed = function(knex) {
-  const topicsInsertions = knex('topics').insert(topicData);
-  const usersInsertions = knex('users').insert(userData);
-
-  return Promise.all([topicsInsertions, usersInsertions])
+  const topicsInsertions = knex('topics')
+    .insert(topicData)
+    .returning('*')
+    // .then()
+  const usersInsertions = knex('users')
+    .insert(userData)
+    .returning('*');
+  return knex.migrate
+    .rollback()
+    .then(() => knex.migrate.latest())
     .then(() => {
+      return Promise.all([topicsInsertions, usersInsertions])
+    })
+    .then(([topics, users]) => {
+      // console.log(topics, 'THESE are the topics')
+      const newArticles = formatDates(articleData);
+      // console.log(newArticles)   
+      const newComments = formatDates(commentData);
+      console.log(newComments)
+
+      return knex('articles')
+        .insert(newArticles)
+        .returning('*')
+        // .then(stuff => {
+        //   // console.log(stuff, 'THIS WAS RETURNED FOR ARTICLES')
+        // })
+
+      
       /* 
       
       Your article data is currently in the incorrect format and will violate your SQL schema. 
