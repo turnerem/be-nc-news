@@ -1,6 +1,11 @@
 # Notes on BE Block Review
 
 Primary keys: are they not by necessity unique? Or must we also specify uniqueness?
+Having trouble using .modify and .leftJoin in same query.
+- it may not be possible to update and select/join in SQL. So knex won't work if we pile these statements into one query
 
 ## Left off at:
 get request to articles/:articles\_id. Unsatisfactory error handling. First thing: Make nice chart of error types and associated codes and messages x
+After Lunch: GET request for all comments associated with an article
+- check fetchArticle and patchArticle are still working.
+- how to check whether author exists?
