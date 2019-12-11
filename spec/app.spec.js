@@ -52,6 +52,34 @@ describe('/api', () => {
             console.log(response.body)
           })
       })
+      it('GET: 404 returns Not Found when given valid but non-existent article_id', () => {
+        return request(app)
+          .get('/api/articles/979')
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).to.equal('Not Found')
+          })
+      })
+      it('PATCH: 200 increments votes accordingly', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({ inc_votes: 33})
+          .expect(200)
+          .then((response) => {
+            expect(response.body.article.votes).to.equal(133)
+            expect(response.body.article).to.have.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
+          })
+      })
+      it.only('PATCH: 200 permits a negative vote count', () => {
+        return request(app)
+          .patch('/api/articles/3')
+          .send({ inc_votes: -33})
+          .expect(200)
+          .then((response) => {
+            expect(response.body.article.votes).to.equal(-33)
+            expect(response.body.article).to.have.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
+          })
+      })
     })
   })
 })
