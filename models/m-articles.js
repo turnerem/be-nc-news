@@ -1,16 +1,25 @@
 const connection = require('../db/connection')
 
+// updateVotes = (votes) => {
+//   return connection
+//     .select('*').from()
+// }
+
 exports.fetchMaybeUpdateArticle = (article_id, votes = null) => {
   return connection
     .select('*').from('articles')
     .where('article_id', article_id)
+    .modify(query => {
+      if (votes) {
+        query.update('votes', '+', votes)
+        // article.votes += votes
+      }
+    })
     .then(([article]) => {
       // console.log('this is article in model', article)
       if (!article) return Promise.reject({ status: 404, msg: 'Not Found'})
       else {
-        if (votes) {
-          article.votes += votes
-        }
+        
         return connection
           .select('*').from('comments')
           .where('article_id', article_id)
@@ -22,11 +31,11 @@ exports.fetchMaybeUpdateArticle = (article_id, votes = null) => {
     })
 }
 
-// exports.updateArticle = (article_id, votes) => {
-//   return connection
-//     .select('*').from('articles')
-//     .where('article_id', article_id)
-//     .then(([article]) => {
+exports.addComment = (article_id, votes) => {
+  return connection
+    .select('*').from('articles')
+    .where('article_id', article_id)
+    .then(([article]) => {
 
-//     })
-// }
+    })
+}

@@ -1,4 +1,4 @@
-const { fetchMaybeUpdateArticle } = require('../models/m-articles')
+const { fetchMaybeUpdateArticle, addComment } = require('../models/m-articles')
 
 exports.getArticle = (req, res, next) => {
   fetchMaybeUpdateArticle(req.params.article_id)
@@ -16,3 +16,7 @@ exports.patchArticle = (req, res, next) => {
     })
     .catch(err => next(err))
 }
+
+// exports.postComment = (req, res, next) => {
+//   addComment()
+// }

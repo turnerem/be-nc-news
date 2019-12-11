@@ -5,4 +5,8 @@ articlesRouter.route('/:article_id')
   .get(getArticle)
   .patch(patchArticle)
 
+// articlesRouter.route('/:article_id/comments')
+//   .post(postComments)
+//   .get(getComments)
+
 module.exports = articlesRouter;
