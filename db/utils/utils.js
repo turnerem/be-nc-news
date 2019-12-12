@@ -34,3 +34,21 @@ exports.formatComments = (comments, articleRef) => {
       article_id: articleRef[belongs_to]}
   })
 };
+
+
+
+
+exports.checkExistenceInOtherTable = (sqlColName, msgColName, sqlVal, sqlTable, mainQueryData) => {
+  return connection  
+          .select(sqlColName).from(sqlTable)
+          .where(sqlColName, sqlVal)
+          .then(chkData => {
+            // console.log('this is the AUTHOR', author)
+            if (!chkData.length) {
+              return Promise.reject({ 
+                status: 404, 
+                msg: `${msgColName} Not Found`})
+            }
+            else return mainQueryData
+          })
+}

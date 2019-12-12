@@ -20,19 +20,29 @@ const commentCount = commentData.length;
 describe('/api', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
+  describe('/not-a-route', () => {
+    it('GET: /not-a-route 404 bad request if route does not exist', () => {
+    return request(app)
+      .get('/papi')
+      .expect(404)
+      .then(({body: {msg} = {}}) => {
+        expect(msg).to.equal('Route Not Found')
+      })
+    })
+  })
   describe('/topics', () => {
     it('GET: 200 returns topics', () => {
       return request(app)
-        .get('/api/topics')
-        .expect(200)
-        .then(response => {
-          expect(response.body.topics[0]).to.have.keys('slug', 'description')
-        })
+      .get('/api/topics')
+      .expect(200)
+      .then(response => {
+        expect(response.body.topics[0]).to.have.keys('slug', 'description')
+      })
     })
     
   })
-  describe('/users', () => {
-    describe('/:username', () => {
+  describe('/:username', () => {
+    describe('/users', () => {
       it('GET: 200 returns user object for a username that exists', () => {
         return request(app)
           .get('/api/users/butter_bridge')
@@ -127,6 +137,14 @@ describe('/api', () => {
             expect(response.body.msg).to.equal('Article Not Found')
           })
       })
+      it('GET: 400 returns Bad Request when given invalid article_id', () => {
+        return request(app)
+          .get('/api/articles/pencil')
+          .expect(400)
+          .then(({body: {msg} = {}}) => {
+            expect(msg).to.equal('Bad Request')
+          })
+      })
       it('PATCH: 200 increments votes accordingly', () => {
         return request(app)
           .patch('/api/articles/1')
@@ -172,7 +190,19 @@ describe('/api', () => {
             })
           })
         })
-        it.only('GET: 200 returns array of all comments associated with an article_id', () => {
+        it('POST: 400 does not permit posting invalid comment', () => {
+          return request(app)
+            .post('/api/articles/1/comments')
+            .send({ pusername: 'penelope', body: 'I am a comment'})
+            .expect(400) 
+            .then(({body: {msg} = {}}) => {
+              // console.log('back to spec', msg)
+              // const { comment } = response.body;
+              expect(msg).to.equal('Bad Request')
+            })
+          })
+        })
+        it('GET: 200 returns array of all comments associated with an article_id', () => {
           return request(app)
           .get('/api/articles/1/comments')
           .expect(200)
@@ -201,8 +231,82 @@ describe('/api', () => {
               expect(comments).to.be.sortedBy('votes', {descending: false})
             })
         })
+        it('GET: 404 if article not found', () => {
+          return request(app)
+          .get('/api/articles/90/comments')
+          .expect(404)
+            .then(({body: {msg} = {}}) => {
+              // console.log(comments)
+              expect(msg).to.equal('Article Not Found')
+            })
+        })
         
       })
+   
+    describe('/comments', () => {
+      // it('GET: 200 gets all comments XXDELETEME', () => {
+      //   return request(app)
+      //     .get
+      // })
+      describe('/:comment_id', () => {
+        it('PATCH: 200 updates comment with a new vote', () => {
+          return request(app)
+            .patch('/api/comments/3')
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then(({body: {comment} = {}}) => {
+              expect(comment.votes).to.equal(101)
+              expect(comment).to.have.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+            })
+        })
+        it('PATCH: 200 updates comment with a downvotes', () => {
+          return request(app)
+            .patch('/api/comments/1')
+            .send({ inc_votes: -20 })
+            .expect(200)
+            .then(({body: {comment} = {}}) => {
+              expect(comment.votes).to.equal(-4)
+            })
+        })
+        it('PATCH: 404 if comment does not exist', () => {
+          return request(app)
+            .patch('/api/comments/79')
+            .send({ inc_votes: 1 })
+            .expect(404)
+            .then(({body: {msg} = {}}) => {
+              expect(msg).to.equal('Comment Not Found')
+            })
+        })
+        it('PATCH: 400 bad request if wrong info in body of request', () => {
+          return request(app)
+            .patch('/api/comments/79')
+            .send({ pinc_votes: 1 })
+            .expect(400)
+            .then(({body: {msg} = {}}) => {
+              expect(msg).to.equal('Bad Request')
+            })
+        })
+        it('DELETE: 200 deletes comment if it exists', () => {
+          return request(app)
+            .del('/api/comments/1')
+            .expect(200)
+            .then(({body: {comment} = {}}) => {
+              // console.log('comment in spec', comment)
+              expect(comment.author).to.equal('butter_bridge')
+              expect(comment.votes).to.equal(16)
+            })
+        })
+        it('DELETE: 404 if comment does not exist', () => {
+          return request(app)
+            .del('/api/comments/10000')
+            .expect(404)
+            .then(({body: {msg} = {}}) => {
+              // console.log('comment in spec', comment)
+              expect(msg).to.equal('Comment Not Found')
+            })
+        })
+      })
     })
-  })
+  
 
+  })

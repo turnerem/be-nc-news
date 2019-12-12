@@ -1,4 +1,21 @@
 const connection = require('../db/connection')
+// const { checkExistenceInOtherTable } = require('../db/utils/utils')
+
+// XX function not working when required in
+const checkExistenceInOtherTable = (sqlColName, msgColName, sqlVal, sqlTable) => {
+  return connection  
+          .select(sqlColName).from(sqlTable)
+          .where(sqlColName, sqlVal)
+          .then(chkData => {
+            // console.log('this is the AUTHOR', author)
+            if (!chkData.length) {
+              return Promise.reject({ 
+                status: 404, 
+                msg: `${msgColName} Not Found`})
+            }
+            else return []
+          })
+}
 
 exports.fetchArticles = (sort_by, order, author, topic) => {
   // console.log('reached model')
@@ -10,33 +27,19 @@ exports.fetchArticles = (sort_by, order, author, topic) => {
     .orderBy(sort_by, order)
     .modify(query => {
       if (author) query.where('articles.author', author)
-    })
-    .modify(query => {
-      // console.log('we get here')
       if (topic) query.where('articles.topic', topic)
     })
     .then(articles => {
       if (!articles.length) {
         // console.log('no articles in the MODEL', articles)
         if (author) {
-          return connection  
-          .select('username').from('users')
-          .where('username', author)
-          .then(author => {
-            // console.log('this is the AUTHOR', author)
-            if (!author.length) return Promise.reject({ status: 404, msg: 'Author Not Found'})
-            else return articles
-          })
+
+          return checkExistenceInOtherTable('username', 'Author', author, 'users')
+
         } else if (topic) {
           // console.log('checking topic')
-          return connection  
-            .select('slug').from('topics')
-            .where('slug', topic)
-            .then(topic => {
-              // console.log('this is the TOPIC', topic)
-              if (!topic.length) return Promise.reject({ status: 404, msg: 'Topic Not Found'})
-              else return articles
-            })
+          return checkExistenceInOtherTable('slug', 'Topic', topic, 'topics')
+
           }
       } 
       // console.log('get back out')
@@ -44,30 +47,6 @@ exports.fetchArticles = (sort_by, order, author, topic) => {
       return articles
     })
 }
-
-// exports.fetchArticleMaybeUpdate = (article_id, votes = null) => {
-//   return connection
-//     .select('articles.*').from('articles')
-//     .where('article_id', article_id)
-//     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
-//     .count({ comment_count: 'article_id'})
-//     .groupBy('articles.title')
-//     .modify(query => {
-//       if (votes) {
-//         query.increment('votes', votes);
-//       }
-//     })
-//     .returning('*')
-//     .then(([article]) => {
-//       console.log(article, 'THIS ARTICLE MODEL')
-//       // console.log('this is article in model', article)
-//       if (!article) return Promise.reject({ status: 404, msg: 'Not Found'})
-//       else {
-//         return article
-//       }
-//     })
-// }
-
 
 // XX rewrite with subqueries
 exports.fetchArticle = (article_id) => {
@@ -99,8 +78,10 @@ exports.updateArticle = (article_id, votes) => {
 
 exports.addComment = (article_id, comment) => {
   const {username, body} = comment;
+  console.log('reached model')
+  if (!username || !body) return Promise.reject({ status: 400, msg: 'Bad Request'})
   const formattedComment = {author: username, body, article_id}
-  // console.log('reached addComment mod', formattedComment)
+  console.log('reached addComment mod', formattedComment)
 
   return connection
     .returning('*').from('comments')
@@ -110,15 +91,21 @@ exports.addComment = (article_id, comment) => {
     })
 }
 
+
+
+
+
 exports.fetchComments = (article_id, sort_by, order) => {
-  console.log('reached modelsortby', sort_by, 'order', order, 'article:', article_id)
   return connection
-  // .select('comment_id', 'votes', 'created_at', 'author', 'body').from('comments')
-  .select('*').from('comments')
-  // .where('article_id', article_id)
-    // .orderBy(sort_by, order)
+    .select('comment_id', 'votes', 'created_at', 'author', 'body').from('comments')
+    .where('article_id', article_id)
+    .orderBy(sort_by, order)
     .then(comments => {
-      console.log('the MOD articles', articles)
+      if (!comments.length) {
+        console.log('comments of length 0')
+        return checkExistenceInOtherTable('article_id', 'Article', article_id, 'articles')
+      }
+      console.log('the MOD articles', comments)
       return comments
     })
 }

@@ -9,3 +9,11 @@ get request to articles/:articles\_id. Unsatisfactory error handling. First thin
 After Lunch: GET request for all comments associated with an article
 - check fetchArticle and patchArticle are still working.
 - how to check whether author exists?
+- in fetchArticles: Need to unest checks for existence of topic and author
+
+## Q&A Lecture
+use .modify to account for undefined input variables instead of Promise.rejects
+- .catch(next) is shorthand for .catch(err => next(err))
+
+## README:
+- provde knexfile, plus note for linux users to include password/username
