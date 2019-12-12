@@ -17,3 +17,12 @@ use .modify to account for undefined input variables instead of Promise.rejects
 
 ## README:
 - provde knexfile, plus note for linux users to include password/username
+
+## Hosting:
+- so that everyone can access my website, I must use Heroku.
+  - Push up to github, push app to Heroku, and Heroku will 'npm start' for us
+  - Herooku also offers db hosting services
+  - Herokue sets process.env.NODE\_ENV to equal 'production'. And will also set process.env.PORT, .DB\_URL too
+  - It hosts the back end
+- Another site will host my frontend, and it will make requests to Heroku to get info
+- there is an option for gitHub to automatically update Heroku for us.

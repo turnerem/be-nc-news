@@ -18,7 +18,7 @@ const checkExistenceInOtherTable = (sqlColName, msgColName, sqlVal, sqlTable) =>
 }
 
 exports.fetchArticles = (sort_by, order, author, topic) => {
-  
+  // const sqlColNames = []
   return connection
     .select('articles.author', 'articles.title', 'articles.article_id', 'articles.topic', 'articles.created_at', 'articles.votes').from('articles')
     .count({ comment_count: 'comments.comment_id'})
@@ -30,6 +30,7 @@ exports.fetchArticles = (sort_by, order, author, topic) => {
       if (topic) query.where('articles.topic', topic)
     })
     .then(articles => {
+      console.log(articles, 'articles in mod')
       if (!articles.length) {
         
         if (author) {
@@ -62,10 +63,13 @@ exports.fetchArticle = (article_id) => {
 }
 
 exports.updateArticle = (article_id, votes) => {
+  // if (!votes) return Promise.reject({ status: 100, msg: 'No Change'})
   return connection  
     .select('*').from('articles')
     .where('article_id', article_id)
-    .increment('votes', votes)
+    .modify(query => {
+      if (votes) query.increment('votes', votes)
+    })
     .returning('*')
     .then(([article]) => {
       

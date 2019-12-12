@@ -16,10 +16,11 @@ app.all('/*', (req, res, next) => {
 
 app.use((err, req, res, next) => {
   
-
+console.log(err, 'back in app error')
   const psqlErrs = {
-    '22P02' : { status: 400, msg: 'Bad Request'},
-    '23502': {status : 400, msg: 'Bad request'}
+    '22P02': { status: 400, msg: 'Bad Request'},
+    '23502': { status : 400, msg: 'Bad request'},
+    '42703': { status: 400, msg: 'Invalid Query'}
   }
   if (err.code === '23503') {
     const badKey = err.detail.match(/Key \(([\w ]+)/)[1];

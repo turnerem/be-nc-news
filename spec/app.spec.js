@@ -20,7 +20,7 @@ const commentCount = commentData.length;
 describe('/api', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
-  it.only('GET: 200 provide json of all available endpoints', () => {
+  it('GET: 200 provide json of all available endpoints', () => {
     return request(app)
       .get('/api')
       .expect(200)
@@ -46,6 +46,14 @@ describe('/api', () => {
       .then(response => {
         expect(response.body.topics[0]).to.have.keys('slug', 'description')
       })
+    })
+    it('PATCH: 405 method not found', () => {
+      return request(app)
+        .patch('/api/topics')
+        .expect(405)
+        .then(({body: {msg} = {}}) => {
+          expect(msg).to.equal('Method Not Found')
+        })
     })
     
   })
@@ -93,7 +101,7 @@ describe('/api', () => {
     })
     it('GET: 200 can sort by votes ascending, for author icellusedkars only', () => {
       return request(app)
-        .get('/api/articles?sort_by=votes:asc&author=icellusedkars')
+        .get('/api/articles?sort_by=votes&order=asc&author=icellusedkars')
         .expect(200)
         .then(({body: {articles} = {}}) => {
           const checkAuthor = article => {
@@ -105,7 +113,7 @@ describe('/api', () => {
     })
     it('GET: 200 returns empty array if author exists but does not have any associated articles', () => {
       return request(app)
-        .get('/api/articles?sort_by=votes:asc&author=lurker')
+        .get('/api/articles?sort_by=votes&order=asc&author=lurker')
         .expect(200)
         .then(({body: {articles} = {}}) => {
           expect(articles.length).to.equal(0);
@@ -113,7 +121,7 @@ describe('/api', () => {
     })
     it('GET: 404 for non-existent author icecream', () => {
       return request(app)
-      .get('/api/articles?sort_by=votes:asc&author=icecream')
+      .get('/api/articles?sort_by=votes&order=asc&author=icecream')
       .expect(404)
       .then(({body: {msg} = {}}) => {
         expect(msg).to.equal('Author Not Found')
@@ -125,6 +133,23 @@ describe('/api', () => {
         .expect(404)
         .then(({body: {msg} = {}}) => {
           expect(msg).to.equal('Topic Not Found')
+        })
+    })
+    // /api/articles?sort_by=not-a-column
+    it('GET: 400 returns error message if invalid sort_by column provided', () => {
+      return request(app)
+        .get('/api/articles?sort_by=not-a-column')
+        .expect(400)
+        .then(({body: {msg} = {}}) => {
+          expect(msg).to.equal('Invalid Query')
+        })
+    })
+    it('PATCH: 405 not allowed to patch to /api/articles', () => {
+      return request(app)
+        .patch('/api/articles')
+        .expect(405)
+        .then(({body: {msg} ={}}) => {
+          expect(msg).to.equal('Method Not Found')
         })
     })
     describe('/:article_id', () => {
@@ -153,6 +178,7 @@ describe('/api', () => {
             expect(msg).to.equal('Bad Request')
           })
       })
+      
       it('PATCH: 200 increments votes accordingly', () => {
         return request(app)
           .patch('/api/articles/1')
@@ -170,7 +196,14 @@ describe('/api', () => {
           .expect(200)
           .then((response) => {
             expect(response.body.article.votes).to.equal(-33)
-            expect(response.body.article).to.have.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes')
+          })
+      })
+      it('PATCH: 200 ignore patch request with no info in body and return article to client unchanged', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .expect(200)
+          .then(({body: {article} ={}}) => {
+            expect(article.votes).to.equal(100)
           })
       })
       describe('/comments', () => {
@@ -232,7 +265,7 @@ describe('/api', () => {
         })
         it('GET: 200 sorts by votes, ascending if requested', () => {
           return request(app)
-          .get('/api/articles/1/comments?sort_by=votes:asc')
+          .get('/api/articles/1/comments?sort_by=votes&order=asc')
           .expect(200)
             .then(({body: {comments} = {}}) => {
               
@@ -246,6 +279,14 @@ describe('/api', () => {
             .then(({body: {msg} = {}}) => {
               
               expect(msg).to.equal('Article Not Found')
+            })
+        })
+        it('GET: 400 returns error message if invalid sort_by column provided', () => {
+          return request(app)
+            .get('/api/articles/1/comments?sort_by=not-a-column')
+            .expect(400)
+            .then(({body: {msg} = {}}) => {
+              expect(msg).to.equal('Invalid Query')
             })
         })
         
@@ -276,7 +317,15 @@ describe('/api', () => {
               expect(comment.votes).to.equal(-4)
             })
         })
-        it('PATCH: 404 if comment does not exist', () => {
+        it.only('PATCH: 200 with no update if no info provided in body of request', () => {
+          return request(app)
+            .patch('/api/comments/1')
+            .expect(200)
+            .then(({body: {comment} = {}}) => {
+              expect(comment.votes).to.equal(16)
+            })
+        })
+        it.only('PATCH: 404 if comment does not exist', () => {
           return request(app)
             .patch('/api/comments/79')
             .send({ inc_votes: 1 })

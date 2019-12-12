@@ -1,11 +1,12 @@
 const { fetchArticles, fetchArticle, updateArticle, addComment, fetchComments } = require('../models/m-articles')
 
 exports.getArticles = (req, res, next) => {
-  const sorting = req.query.sort_by || 'created_at:desc';
-  const sort_by = (sorting.split(':')[0] === undefined | sorting.split(':')[0] === 'date') ? 'created_at' : sorting.split(':')[0];
-  const order = sorting.split(':')[1] || 'desc';
+  console.log('in controller', req.query)
+  const sort_by = req.query.sort_by || 'created_at';
+  const order = req.query.order || 'desc';
   const author = req.query.author || undefined;
   const topic = req.query.topic || undefined;
+  console.log('order', order)
 
   
   fetchArticles(sort_by, order, author, topic)
@@ -16,6 +17,7 @@ exports.getArticles = (req, res, next) => {
 }
 
 exports.getArticle = (req, res, next) => {
+
   fetchArticle(req.params.article_id)
     .then(article => {
       res.status(200).send({ article })
@@ -35,15 +37,16 @@ exports.patchArticle = (req, res, next) => {
 exports.postComment = (req, res, next) => {
   addComment(req.params.article_id, req.body)
     .then(comment => {
-      res.status(200).send({ comment })
+      res.status(201).send({ comment })
     })
     .catch(err => next(err))
 }
 
 exports.getComments = (req, res, next) => {
-  const query = req.query.sort_by || 'created_at:desc'
-  const sort_by = query.split(':')[0] || 'created_at';
-  const order = query.split(':')[1] || 'desc';
+  console.log('in controller', req.query)
+
+  const sort_by = req.query.sort_by || 'created_at'
+  const order = req.query.order || 'desc';
   
   fetchComments(req.params.article_id, sort_by, order)
     .then(comments => {

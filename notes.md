@@ -11,6 +11,9 @@ After Lunch: GET request for all comments associated with an article
 - how to check whether author exists?
 - in fetchArticles: Need to unest checks for existence of topic and author
 
+## in updateComment
+- catch invalid comment id and handle in app
+
 ## Q&A Lecture
 use .modify to account for undefined input variables instead of Promise.rejects
 - .catch(next) is shorthand for .catch(err => next(err))
