@@ -20,14 +20,14 @@ const commentCount = commentData.length;
 describe('/api', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
-  // it('GET: 200 provide json of all available endpoints', () => {
-  //   return request(app)
-  //     .get('/api')
-  //     .expect(200)
-  //     .then(endpoints => {
-  //       
-  //     })
-  // })
+  it.only('GET: 200 provide json of all available endpoints', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then(endpoints => {
+        
+      })
+  })
   describe('/not-a-route', () => {
     it('GET: /not-a-route 404 bad request if route does not exist', () => {
     return request(app)
