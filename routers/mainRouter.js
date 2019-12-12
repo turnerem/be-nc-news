@@ -11,7 +11,7 @@ apiRouter.use('/users', usersRouter);
 apiRouter.use('/articles', articlesRouter);
 
 apiRouter.use('/comments', commentsRouter, () => {
-    console.log('reached mainRouter')
+    
 })
 
 // apiRouter.route('/*')

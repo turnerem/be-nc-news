@@ -33,18 +33,18 @@ exports.seed = function(knex) {
     })
     .then(articles => {
       
-      // console.log(articles[0], 'ARTICLE FORMATTED');
+      
       const refObj = makeRefObj(articles);
-      // console.log(commentData[0], 'COMMENT NOT FORMATTED');
+      
       let formattedComments = formatDates(commentData);
       formattedComments = formatComments(formattedComments, refObj);
-      // console.log(formattedComments[0], 'COMMENT FORMATTED 1');
+      
 
       return knex('comments')
         .insert(formattedComments)
         .returning('*')
         // .then(comments => {
-        //   console.log(comments[0], 'COMMENT FORMATTED 2');
+        //   
         // })
     });
 };

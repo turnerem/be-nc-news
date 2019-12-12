@@ -4,7 +4,7 @@ const { getUser } = require('../controllers/c-users')
 
 usersRouter.get('/:username', getUser)
   // .then(() => {
-  //   console.log('reached users router')
+  //   
   // })
   // .all(send404Error);
 

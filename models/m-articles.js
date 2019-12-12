@@ -7,7 +7,7 @@ const checkExistenceInOtherTable = (sqlColName, msgColName, sqlVal, sqlTable) =>
           .select(sqlColName).from(sqlTable)
           .where(sqlColName, sqlVal)
           .then(chkData => {
-            // console.log('this is the AUTHOR', author)
+            
             if (!chkData.length) {
               return Promise.reject({ 
                 status: 404, 
@@ -18,7 +18,7 @@ const checkExistenceInOtherTable = (sqlColName, msgColName, sqlVal, sqlTable) =>
 }
 
 exports.fetchArticles = (sort_by, order, author, topic) => {
-  // console.log('reached model')
+  
   return connection
     .select('articles.author', 'articles.title', 'articles.article_id', 'articles.topic', 'articles.created_at', 'articles.votes').from('articles')
     .count({ comment_count: 'comments.comment_id'})
@@ -31,18 +31,18 @@ exports.fetchArticles = (sort_by, order, author, topic) => {
     })
     .then(articles => {
       if (!articles.length) {
-        // console.log('no articles in the MODEL', articles)
+        
         if (author) {
 
           return checkExistenceInOtherTable('username', 'Author', author, 'users')
 
         } else if (topic) {
-          // console.log('checking topic')
+          
           return checkExistenceInOtherTable('slug', 'Topic', topic, 'topics')
 
           }
       } 
-      // console.log('get back out')
+      
 
       return articles
     })
@@ -68,7 +68,7 @@ exports.updateArticle = (article_id, votes) => {
     .increment('votes', votes)
     .returning('*')
     .then(([article]) => {
-      // console.log(article)
+      
       return article
     })
 }
@@ -78,10 +78,10 @@ exports.updateArticle = (article_id, votes) => {
 
 exports.addComment = (article_id, comment) => {
   const {username, body} = comment;
-  console.log('reached model')
+  
   if (!username || !body) return Promise.reject({ status: 400, msg: 'Bad Request'})
   const formattedComment = {author: username, body, article_id}
-  console.log('reached addComment mod', formattedComment)
+  
 
   return connection
     .returning('*').from('comments')
@@ -102,10 +102,10 @@ exports.fetchComments = (article_id, sort_by, order) => {
     .orderBy(sort_by, order)
     .then(comments => {
       if (!comments.length) {
-        console.log('comments of length 0')
+        
         return checkExistenceInOtherTable('article_id', 'Article', article_id, 'articles')
       }
-      console.log('the MOD articles', comments)
+      
       return comments
     })
 }

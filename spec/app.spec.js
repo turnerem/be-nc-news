@@ -20,6 +20,14 @@ const commentCount = commentData.length;
 describe('/api', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
+  // it('GET: 200 provide json of all available endpoints', () => {
+  //   return request(app)
+  //     .get('/api')
+  //     .expect(200)
+  //     .then(endpoints => {
+  //       
+  //     })
+  // })
   describe('/not-a-route', () => {
     it('GET: /not-a-route 404 bad request if route does not exist', () => {
     return request(app)
@@ -48,7 +56,7 @@ describe('/api', () => {
           .get('/api/users/butter_bridge')
           .expect(200)
           .then(response => {
-            // console.log('topics in spec', response.body)
+            
             expect(response.body.user).to.have.keys('username', 'avatar_url', 'name')
           })
       })
@@ -57,7 +65,7 @@ describe('/api', () => {
           .get('/api/users/jimminy')
           .expect(404)
           .then((response) => {
-            // console.log(response.body)
+            
             expect(response.body.msg).to.equal('Not Found')
           })
       })      
@@ -69,7 +77,7 @@ describe('/api', () => {
         .get('/api/articles')
         .expect(200)
         .then(({body: {articles} = {}}) => {
-          // console.log(articles, 'articles IN SPEC')
+          
           expect(articles[0]).to.have.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
         })
     })
@@ -78,7 +86,7 @@ describe('/api', () => {
         .get('/api/articles')
         .expect(200)
         .then(({body: {articles} = {}}) => {
-          // console.log(articles, 'articles IN SPEC')
+          
           expect(articles[0]).to.have.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
           expect(articles).to.be.sortedBy('created_at', {descending: true})
         })
@@ -126,7 +134,7 @@ describe('/api', () => {
           .expect(200)
           .then((response) => {
             expect(response.body.article).to.have.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count')
-            // console.log(response.body)
+            
           })
       })
       it('GET: 404 returns Not Found when given valid but non-existent article_id', () => {
@@ -172,7 +180,7 @@ describe('/api', () => {
             .send({ username: 'rogersop', body: 'I am a comment'})
             .expect(200) 
             .then(({body: {comment} = {}}) => {
-              // console.log('back to spec', comment)
+              
               // const { comment } = response.body;
               expect(comment).to.have.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
               expect(comment.comment_id).to.equal(commentCount + 1)
@@ -184,7 +192,7 @@ describe('/api', () => {
             .send({ username: 'penelope', body: 'I am a comment'})
             .expect(404) 
             .then(({body: {msg} = {}}) => {
-              // console.log('back to spec', msg)
+              
               // const { comment } = response.body;
               expect(msg).to.equal('Author Not Found')
             })
@@ -196,7 +204,7 @@ describe('/api', () => {
             .send({ pusername: 'penelope', body: 'I am a comment'})
             .expect(400) 
             .then(({body: {msg} = {}}) => {
-              // console.log('back to spec', msg)
+              
               // const { comment } = response.body;
               expect(msg).to.equal('Bad Request')
             })
@@ -207,7 +215,7 @@ describe('/api', () => {
           .get('/api/articles/1/comments')
           .expect(200)
             .then(({body: {comments} = {}}) => {
-              console.log(comments)
+              
               expect(comments[0]).to.have.keys('comment_id', 'votes', 'created_at', 'author', 'body')
               
               // expect(comments).to.be.sortedBy('created_at', {descending: true})
@@ -218,7 +226,7 @@ describe('/api', () => {
           .get('/api/articles/1/comments')
           .expect(200)
             .then(({body: {comments} = {}}) => {
-              // console.log(comments)
+              
               expect(comments).to.be.sortedBy('created_at', {descending: true})
             })
         })
@@ -227,7 +235,7 @@ describe('/api', () => {
           .get('/api/articles/1/comments?sort_by=votes:asc')
           .expect(200)
             .then(({body: {comments} = {}}) => {
-              // console.log(comments)
+              
               expect(comments).to.be.sortedBy('votes', {descending: false})
             })
         })
@@ -236,7 +244,7 @@ describe('/api', () => {
           .get('/api/articles/90/comments')
           .expect(404)
             .then(({body: {msg} = {}}) => {
-              // console.log(comments)
+              
               expect(msg).to.equal('Article Not Found')
             })
         })
@@ -291,7 +299,7 @@ describe('/api', () => {
             .del('/api/comments/1')
             .expect(200)
             .then(({body: {comment} = {}}) => {
-              // console.log('comment in spec', comment)
+              
               expect(comment.author).to.equal('butter_bridge')
               expect(comment.votes).to.equal(16)
             })
@@ -301,7 +309,7 @@ describe('/api', () => {
             .del('/api/comments/10000')
             .expect(404)
             .then(({body: {msg} = {}}) => {
-              // console.log('comment in spec', comment)
+              
               expect(msg).to.equal('Comment Not Found')
             })
         })

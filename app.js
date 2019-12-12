@@ -9,13 +9,13 @@ app.use('/api', apiRouter)
 
 
 app.all('/*', (req, res, next) => {
-  // console.log(err, 'err for router?')
+  
     res.status(404).send({ msg: 'Route Not Found' })
   })
 
 
 app.use((err, req, res, next) => {
-  console.log(err, 'BACK IN APP ERR')
+  
 
   const psqlErrs = {
     '22P02' : { status: 400, msg: 'Bad Request'},

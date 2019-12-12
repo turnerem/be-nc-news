@@ -9,10 +9,10 @@ exports.seed = (knex) => {
         .insert(topicData)
         .returning('*')
         .then((anyTopics) => {
-          console.log(anyTopics)
+          
         })
     })
     .then(stuff => {
-      console.log(stuff)
+      
     })
 }

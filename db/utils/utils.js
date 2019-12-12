@@ -14,7 +14,7 @@ exports.makeRefObj = list => {
   const refObj = {};
   list.forEach((article) => {
     if (!article.hasOwnProperty('title') || !article.hasOwnProperty('article_id')) {
-      console.log('missing proper keys or values')
+      
     }
     refObj[article.title] = article.article_id
   })
@@ -24,7 +24,7 @@ exports.makeRefObj = list => {
 exports.formatComments = (comments, articleRef) => {
   return comments.map(comment => {
     if (!comment.hasOwnProperty('belongs_to')) {
-      console.log('missing belongs_to key')
+      
     }
 
     let { belongs_to, created_by, ...theRest } = comment;
@@ -43,7 +43,7 @@ exports.checkExistenceInOtherTable = (sqlColName, msgColName, sqlVal, sqlTable, 
           .select(sqlColName).from(sqlTable)
           .where(sqlColName, sqlVal)
           .then(chkData => {
-            // console.log('this is the AUTHOR', author)
+            
             if (!chkData.length) {
               return Promise.reject({ 
                 status: 404, 
