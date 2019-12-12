@@ -44,6 +44,7 @@ exports.getComments = (req, res, next) => {
   const query = req.query.sort_by || 'created_at:desc'
   const sort_by = query.split(':')[0] || 'created_at';
   const order = query.split(':')[1] || 'desc';
+  // console.log('sortby', sort_by, 'order', order, 'article:', req.params.article_id)
   fetchComments(req.params.article_id, sort_by, order)
     .then(comments => {
       res.status(200).send({ comments })
