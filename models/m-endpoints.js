@@ -1,10 +1,7 @@
-const fs = require('fs')
+// const endpoints = require('../endpoints.json')
 
-exports.fetchEndpoints = () => {
-  console.log('reached endpoints model')
-  fs.readFile(_dirname + '/../endpoints.json', (err, endpoints) => {
-    if (err) next(err)
-    
-  })
+// exports.fetchEndpoints = (endpoints) => {
+//   console.log('reached model', endpoints)
+//   return endpoints  
 
-}
+// }

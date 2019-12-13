@@ -16,7 +16,7 @@ app.all('/*', (req, res, next) => {
 
 app.use((err, req, res, next) => {
   
-console.log(err, 'back in app error')
+
   const psqlErrs = {
     '22P02': { status: 400, msg: 'Bad Request'},
     '23502': { status : 400, msg: 'Bad request'},

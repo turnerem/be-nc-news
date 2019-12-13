@@ -1,9 +1,7 @@
-const { fetchEndpoints } = require('../models/m-endpoints')
+// const endpoints = require('../endpoints.json')
 
 exports.getEndpoints = (req, res, next) => {
-  console.log('reached controller')
-  fetchEndpoints()
-    .then(endpoints => {
-      res.status(200).send({ endpoints })
-    })
+  const endpoints = require('../endpoints.json')
+  res.status(200).send({ endpoints })
+  
 }

@@ -1,10 +1,7 @@
 const connection = require('../db/connection');
 
 exports.updateComment = (comment_id, inc_votes) => {
-  // console.log('is id a number?', typeof parseInt(comment_id) === 'number')
-  // if (!inc_votes | !typeof parseInt(comment_id) === 'number') {
-  //   return Promise.reject({status: 400, msg: 'Bad Request'})
-  // }
+
   return connection
     .select('*').from('comments')
     .where('comment_id', comment_id)
@@ -13,8 +10,6 @@ exports.updateComment = (comment_id, inc_votes) => {
     })
     .returning('*')
     .then(([comment]) => {
-
-      
       if (!comment) return Promise.reject({ status: 404, msg: 'Comment Not Found'})
       else return comment
     })

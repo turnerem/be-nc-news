@@ -30,7 +30,7 @@ exports.fetchArticles = (sort_by, order, author, topic) => {
       if (topic) query.where('articles.topic', topic)
     })
     .then(articles => {
-      console.log(articles, 'articles in mod')
+      
       if (!articles.length) {
         
         if (author) {

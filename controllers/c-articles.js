@@ -1,12 +1,12 @@
 const { fetchArticles, fetchArticle, updateArticle, addComment, fetchComments } = require('../models/m-articles')
 
 exports.getArticles = (req, res, next) => {
-  console.log('in controller', req.query)
+  
   const sort_by = req.query.sort_by || 'created_at';
   const order = req.query.order || 'desc';
   const author = req.query.author || undefined;
   const topic = req.query.topic || undefined;
-  console.log('order', order)
+  
 
   
   fetchArticles(sort_by, order, author, topic)
@@ -43,7 +43,7 @@ exports.postComment = (req, res, next) => {
 }
 
 exports.getComments = (req, res, next) => {
-  console.log('in controller', req.query)
+  
 
   const sort_by = req.query.sort_by || 'created_at'
   const order = req.query.order || 'desc';

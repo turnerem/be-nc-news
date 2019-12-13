@@ -24,8 +24,16 @@ describe('/api', () => {
     return request(app)
       .get('/api')
       .expect(200)
-      .then(endpoints => {
-        
+      .then(({body: {endpoints} = {}}) => {
+        expect(endpoints).to.have.keys('GET /api', 'GET /api/topics', 'GET /api/articles')
+      })
+  })
+  it('DELETE: 405 only GET method alloweed on this endpoint', () => {
+    return request(app)
+      .del('/api')
+      .expect(405)
+      .then(({body: {msg} ={}}) => {
+        expect(msg).to.equal('Method Not Found')
       })
   })
   describe('/not-a-route', () => {
@@ -207,11 +215,11 @@ describe('/api', () => {
           })
       })
       describe('/comments', () => {
-        it('POST: 200 posts comment for an article', () => {
+        it('POST: 201 posts comment for an article', () => {
           return request(app)
             .post('/api/articles/1/comments')
             .send({ username: 'rogersop', body: 'I am a comment'})
-            .expect(200) 
+            .expect(201) 
             .then(({body: {comment} = {}}) => {
               
               // const { comment } = response.body;
@@ -317,7 +325,7 @@ describe('/api', () => {
               expect(comment.votes).to.equal(-4)
             })
         })
-        it.only('PATCH: 200 with no update if no info provided in body of request', () => {
+        it('PATCH: 200 with no update if no info provided in body of request', () => {
           return request(app)
             .patch('/api/comments/1')
             .expect(200)
@@ -325,22 +333,22 @@ describe('/api', () => {
               expect(comment.votes).to.equal(16)
             })
         })
-        it.only('PATCH: 404 if comment does not exist', () => {
+        it('PATCH: 200 with no update if wrong info provided in body of request', () => {
+          return request(app)
+            .patch('/api/comments/1')
+            .send({ pinc_votes: 1 })
+            .expect(200)
+            .then(({body: {comment} = {}}) => {
+              expect(comment.votes).to.equal(16)
+            })
+        })
+        it('PATCH: 404 if comment does not exist', () => {
           return request(app)
             .patch('/api/comments/79')
             .send({ inc_votes: 1 })
             .expect(404)
             .then(({body: {msg} = {}}) => {
               expect(msg).to.equal('Comment Not Found')
-            })
-        })
-        it('PATCH: 400 bad request if wrong info in body of request', () => {
-          return request(app)
-            .patch('/api/comments/79')
-            .send({ pinc_votes: 1 })
-            .expect(400)
-            .then(({body: {msg} = {}}) => {
-              expect(msg).to.equal('Bad Request')
             })
         })
         it('DELETE: 200 deletes comment if it exists', () => {
