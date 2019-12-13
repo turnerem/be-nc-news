@@ -1,5 +1,5 @@
 #!/bin
 
 git add .
-git commit -m 'shell commit'
+git commit -m "$1"
 git push origin master
