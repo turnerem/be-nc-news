@@ -1,5 +1,5 @@
 #!/bin
-
+echo "hi"
 pw=`cat linux_password.txt`
 un=`cat linux_username.txt`
 echo $pw
