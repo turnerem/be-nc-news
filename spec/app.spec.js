@@ -85,6 +85,14 @@ describe('/api', () => {
             expect(response.body.msg).to.equal('Not Found')
           })
       })      
+      it('GET: 405 if method other than get is attempted on /api/users endpoint', () => {
+        return request(app)
+          .put('/api/users/butter_bridge')
+          .expect(405)
+          .then((response) => {
+            expect(response.body.msg).to.equal('Method Not Found')
+          })
+      })      
     })
   })
   describe('/articles', () => {
@@ -351,14 +359,14 @@ describe('/api', () => {
               expect(msg).to.equal('Comment Not Found')
             })
         })
-        it('DELETE: 200 deletes comment if it exists', () => {
+        it('DELETE: 204 deletes comment if it exists, does not return anything on body of response', () => {
           return request(app)
             .del('/api/comments/1')
-            .expect(200)
-            .then(({body: {comment} = {}}) => {
-              
-              expect(comment.author).to.equal('butter_bridge')
-              expect(comment.votes).to.equal(16)
+            .expect(204)
+            .then(({body}) => {
+              // console.log(Object.keys(body), 'this is the body')
+              expect(Object.keys(body).length).to.equal(0)
+              // expect(comment.votes).to.equal(16)
             })
         })
         it('DELETE: 404 if comment does not exist', () => {

@@ -15,9 +15,8 @@ exports.patchComment = (req, res, next) => {
 exports.deleteComment = (req, res, next) => {
   const { comment_id } = req.params
   removeComment(comment_id)
-    .then(comment => {
-      
-      res.status(200).send({ comment })
+    .then(() => {
+      res.sendStatus(204)
     })
     .catch(err => next(err))
 }
