@@ -1,15 +1,7 @@
 const { fetchArticles, fetchArticle, updateArticle, addComment, fetchComments } = require('../models/m-articles')
 
 exports.getArticles = (req, res, next) => {
-  
-  const sort_by = req.query.sort_by || 'created_at';
-  const order = req.query.order || 'desc';
-  const author = req.query.author || undefined;
-  const topic = req.query.topic || undefined;
-  
-
-  
-  fetchArticles(sort_by, order, author, topic)
+  fetchArticles(req.query)
     .then(articles => {
       res.status(200).send({ articles })
     })
@@ -17,7 +9,7 @@ exports.getArticles = (req, res, next) => {
 }
 
 exports.getArticle = (req, res, next) => {
-
+  
   fetchArticle(req.params.article_id)
     .then(article => {
       res.status(200).send({ article })

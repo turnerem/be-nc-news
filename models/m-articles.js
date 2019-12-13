@@ -17,8 +17,13 @@ const checkExistenceInOtherTable = (sqlColName, msgColName, sqlVal, sqlTable) =>
           })
 }
 
-exports.fetchArticles = (sort_by, order, author, topic) => {
-  // const sqlColNames = []
+exports.fetchArticles = (query) => {
+  const sort_by = query.sort_by || 'created_at';
+  const order = query.order || 'desc';
+  const author = query.author || undefined;
+  const topic = query.topic || undefined;
+  const limit = query.limit || 10;
+  const offset = limit * (query.p - 1) || 0;
   return connection
     .select('articles.author', 'articles.title', 'articles.article_id', 'articles.topic', 'articles.created_at', 'articles.votes').from('articles')
     .count({ comment_count: 'comments.comment_id'})
@@ -29,8 +34,9 @@ exports.fetchArticles = (sort_by, order, author, topic) => {
       if (author) query.where('articles.author', author)
       if (topic) query.where('articles.topic', topic)
     })
+    .limit(limit)
+    .offset(offset)
     .then(articles => {
-      
       if (!articles.length) {
         
         if (author) {
@@ -43,8 +49,6 @@ exports.fetchArticles = (sort_by, order, author, topic) => {
 
           }
       } 
-      
-
       return articles
     })
 }

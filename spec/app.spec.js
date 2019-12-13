@@ -115,6 +115,22 @@ describe('/api', () => {
           expect(articles).to.be.sortedBy('created_at', {descending: true})
         })
     })
+    it.only('GET: 200 can limit articles returned to 5', () => {
+      return request(app)
+        .get('/api/articles?limit=5')
+        .expect(200)
+        .then(({body: {articles} = {}}) => {
+          expect(articles.length).to.equal(5)
+        })
+    })
+    it.only('GET: 200 can show the next 5 articles easy peasy', () => {
+      return request(app)
+        .get('/api/articles?limit=5&p=2')
+        .expect(200)
+        .then(({body: {articles} = {}}) => {
+          expect(articles[0].title).to.equal('A')
+        })
+    })
     it('GET: 200 can sort by votes ascending, for author icellusedkars only', () => {
       return request(app)
         .get('/api/articles?sort_by=votes&order=asc&author=icellusedkars')
