@@ -29,3 +29,9 @@ use .modify to account for undefined input variables instead of Promise.rejects
   - It hosts the back end
 - Another site will host my frontend, and it will make requests to Heroku to get info
 - there is an option for gitHub to automatically update Heroku for us.
+
+## Heroku
+- listen.js: not sure about object destructuring
+```{js}
+const { PORT = 9090 } = process.env;
+```
