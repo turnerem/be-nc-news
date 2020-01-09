@@ -4,17 +4,17 @@ const { send405Error } = require('../errorHandling')
 
 articlesRouter.route('/')
   .get(getArticles)
-  .all((req, res, next) => send405Error(req, res, next))
+  .all(send405Error)
 
 articlesRouter.route('/:article_id')
   .get(getArticle)
   .patch(patchArticle)
-  .all((req, res, next) => send405Error(req, res, next))
+  .all(send405Error)
 
 articlesRouter.route('/:article_id/comments')
   .post(postComment)
   .get(getComments)
-  .all((req, res, next) => send405Error(req, res, next))
+  .all(send405Error)
   
 
 module.exports = articlesRouter;

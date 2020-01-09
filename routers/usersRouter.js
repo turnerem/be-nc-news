@@ -4,7 +4,7 @@ const { send405Error } = require('../errorHandling')
 
 usersRouter.route('/:username')
   .get(getUser)
-  .all((req, res, next) => send405Error(req, res, next))
+  .all(send405Error)
 
 
 module.exports = usersRouter
