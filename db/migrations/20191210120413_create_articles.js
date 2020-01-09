@@ -6,8 +6,8 @@ exports.up = function(knex) {
     table.string('title')
     table.string('body', 5000)
     table.integer('votes').defaultTo(0)
-    table.string('topic').references('topics.slug')
-    table.string('author').references('users.username')
+    table.string('topic').references('topics.slug').notNullable()
+    table.string('author').references('users.username').notNullable()
     table.timestamp('created_at').defaultTo(knex.fn.now())
   })
 };

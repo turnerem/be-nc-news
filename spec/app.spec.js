@@ -115,7 +115,7 @@ describe('/api', () => {
           expect(articles).to.be.sortedBy('created_at', {descending: true})
         })
     })
-    it.only('GET: 200 can limit articles returned to 5', () => {
+    it('GET: 200 can limit articles returned to 5', () => {
       return request(app)
         .get('/api/articles?limit=5')
         .expect(200)
@@ -123,7 +123,7 @@ describe('/api', () => {
           expect(articles.length).to.equal(5)
         })
     })
-    it.only('GET: 200 can show the next 5 articles easy peasy', () => {
+    it('GET: 200 can show the next 5 articles', () => {
       return request(app)
         .get('/api/articles?limit=5&p=2')
         .expect(200)
