@@ -1,11 +1,9 @@
 const topicsRouter = require('express').Router();
 const { getTopics } = require('../controllers/c-topics')
-// const { methNotFound } = require('../errorHandling')
+const { send405Error } = require('../errorHandling')
 
 topicsRouter.route('/')
   .get(getTopics)
-  .all((req, res, next) => {
-    res.status(405).send({ msg: 'Method Not Found'})
-  })
+  .all((req, res, next) => send405Error(req, res, next))
 
 module.exports = topicsRouter;
