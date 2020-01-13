@@ -1,21 +1,21 @@
 const connection = require('../db/connection')
-// const { checkExistenceInOtherTable } = require('../db/utils/utils')
+const checkExistenceInOtherTable = require('./utils')
 
-// XX function not working when required in
-const checkExistenceInOtherTable = (sqlColName, msgColName, sqlVal, sqlTable) => {
-  return connection  
-          .select(sqlColName).from(sqlTable)
-          .where(sqlColName, sqlVal)
-          .then(chkData => {
+// // XX function not working when required in
+// const checkExistenceInOtherTable = (sqlColName, msgColName, sqlVal, sqlTable) => {
+//   return connection  
+//           .select(sqlColName).from(sqlTable)
+//           .where(sqlColName, sqlVal)
+//           .then(chkData => {
             
-            if (!chkData.length) {
-              return Promise.reject({ 
-                status: 404, 
-                msg: `${msgColName} Not Found`})
-            }
-            else return []
-          })
-}
+//             if (!chkData.length) {
+//               return Promise.reject({ 
+//                 status: 404, 
+//                 msg: `${msgColName} Not Found`})
+//             }
+//             else return []
+//           })
+// }
 
 exports.fetchArticles = (query) => {
   const sort_by = query.sort_by || 'created_at';
