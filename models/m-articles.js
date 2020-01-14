@@ -103,11 +103,19 @@ exports.addComment = (article_id, comment) => {
 
 
 
-exports.fetchComments = (article_id, sort_by, order) => {
+exports.fetchComments = (article_id, query) => {
+
+  const sort_by = query.sort_by || 'created_at'
+  const order = query.order || 'desc';
+  const limit = query.limit || 10;
+  const offset = limit * (query.p - 1) || 0;
+
   return connection
     .select('comment_id', 'votes', 'created_at', 'author', 'body').from('comments')
     .where('article_id', article_id)
     .orderBy(sort_by, order)
+    .limit(limit)
+    .offset(offset)
     .then(comments => {
       if (!comments.length) {
         

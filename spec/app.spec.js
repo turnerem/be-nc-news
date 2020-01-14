@@ -245,7 +245,6 @@ describe('/api', () => {
             .send({ username: 'rogersop', body: 'I am a comment'})
             .expect(201) 
             .then(({body: {comment} = {}}) => {
-              
               // const { comment } = response.body;
               expect(comment).to.have.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
               expect(comment.comment_id).to.equal(commentCount + 1)
@@ -280,7 +279,7 @@ describe('/api', () => {
           .get('/api/articles/1/comments')
           .expect(200)
             .then(({body: {comments} = {}}) => {
-              
+              console.log(comments)
               expect(comments[0]).to.have.keys('comment_id', 'votes', 'created_at', 'author', 'body')
               
               // expect(comments).to.be.sortedBy('created_at', {descending: true})
@@ -302,6 +301,15 @@ describe('/api', () => {
             .then(({body: {comments} = {}}) => {
               
               expect(comments).to.be.sortedBy('votes', {descending: false})
+            })
+        })
+        it('GET: 200 returns only 3 comments if that is all we want', () => {
+          return request(app)
+          .get('/api/articles/1/comments?limit=3')
+          .expect(200)
+            .then(({body: {comments} = {}}) => {
+              
+              expect(comments.length).to.equal(3)
             })
         })
         it('GET: 404 if article not found', () => {
