@@ -11,8 +11,11 @@ function checkExistenceInOtherTable (sqlColName, msgColName, sqlVal, sqlTable) {
                 status: 404, 
                 msg: `${msgColName} Not Found`})
             }
-            else return []
+            else return { articles: [], total_count: 0 }
           })
 }
 
+// function alsoReturnTotCount (data, )
+
 module.exports = checkExistenceInOtherTable
+

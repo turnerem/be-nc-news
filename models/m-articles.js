@@ -34,22 +34,37 @@ exports.fetchArticles = (query) => {
       if (author) query.where('articles.author', author)
       if (topic) query.where('articles.topic', topic)
     })
+    // .then(articles => {
+    //   const total_count = articles.length
+    // })
     .limit(limit)
     .offset(offset)
     .then(articles => {
       if (!articles.length) {
         
         if (author) {
-
+          
           return checkExistenceInOtherTable('username', 'Author', author, 'users')
-
+          
         } else if (topic) {
           
           return checkExistenceInOtherTable('slug', 'Topic', topic, 'topics')
-
-          }
-      } 
-      return articles
+          
+        }
+      }
+      return connection
+        .select().from('articles')
+        .modify(query => {
+          if (author) query.where('articles.author', author)
+          if (topic) query.where('articles.topic', topic)
+        })
+        .count({total_count: '*'})
+        .first()
+        .then(calc => {
+          return {articles, total_count: 1 * calc.total_count}
+        })
+        .catch(err => {console.log(err)})
+      // return articles
     })
 }
 

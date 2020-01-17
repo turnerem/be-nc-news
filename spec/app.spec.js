@@ -96,13 +96,13 @@ describe('/api', () => {
     })
   })
   describe('/articles', () => {
-    it('GET: 200 returns all articles if no queries specified', () => {
+    it('GET: 200 returns all articles if no queries specified, and also a total count', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
-        .then(({body: {articles} = {}}) => {
-          
+        .then(({body: {articles, total_count} = {}}) => {
           expect(articles[0]).to.have.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
+          expect(total_count).to.equal(12)
         })
     })
     it('GET: 200 returns all articles sorted by date descending by default', () => {
@@ -115,12 +115,13 @@ describe('/api', () => {
           expect(articles).to.be.sortedBy('created_at', {descending: true})
         })
     })
-    it('GET: 200 can limit articles returned to 5', () => {
+    it('GET: 200 can limit articles returned to 5. Total count still 12', () => {
       return request(app)
         .get('/api/articles?limit=5')
         .expect(200)
-        .then(({body: {articles} = {}}) => {
+        .then(({body: {articles, total_count} = {}}) => {
           expect(articles.length).to.equal(5)
+          expect(total_count).to.equal(12)
         })
     })
     it('GET: 200 can show the next 5 articles', () => {
@@ -131,16 +132,17 @@ describe('/api', () => {
           expect(articles[0].title).to.equal('A')
         })
     })
-    it('GET: 200 can sort by votes ascending, for author icellusedkars only', () => {
+    it('GET: 200 can sort by votes ascending, for author icellusedkars only. Total count is for author articles only', () => {
       return request(app)
         .get('/api/articles?sort_by=votes&order=asc&author=icellusedkars')
         .expect(200)
-        .then(({body: {articles} = {}}) => {
+        .then(({body: {articles, total_count} = {}}) => {
           const checkAuthor = article => {
             return article.author === 'icellusedkars'
           }
           expect(articles.every(checkAuthor)).to.be.true;
           expect(articles).to.be.sortedBy('votes', {descending: false})
+          expect(total_count).to.equal(6)
         })
     })
     it('GET: 200 returns empty array if author exists but does not have any associated articles', () => {
@@ -279,7 +281,6 @@ describe('/api', () => {
           .get('/api/articles/1/comments')
           .expect(200)
             .then(({body: {comments} = {}}) => {
-              console.log(comments)
               expect(comments[0]).to.have.keys('comment_id', 'votes', 'created_at', 'author', 'body')
               
               // expect(comments).to.be.sortedBy('created_at', {descending: true})
@@ -305,11 +306,11 @@ describe('/api', () => {
         })
         it('GET: 200 returns only 3 comments if that is all we want', () => {
           return request(app)
-          .get('/api/articles/1/comments?limit=3')
+          .get('/api/articles/1/comments?limit=2')
           .expect(200)
             .then(({body: {comments} = {}}) => {
               
-              expect(comments.length).to.equal(3)
+              expect(comments.length).to.equal(2)
             })
         })
         it('GET: 404 if article not found', () => {
