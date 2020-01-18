@@ -51,8 +51,11 @@ describe('/api', () => {
       return request(app)
       .get('/api/topics')
       .expect(200)
-      .then(response => {
-        expect(response.body.topics[0]).to.have.keys('slug', 'description')
+      .then(({body: {topics_res} = {}}) => {
+        console.log(topics_res)
+        const { topics, topic_art_dates } = topics_res;
+        expect(topics[0]).to.have.keys('slug', 'description')
+        expect(topic_art_dates[0]).to.have.keys('created_at', 'topic')
       })
     })
     it('PATCH: 405 method not found', () => {
