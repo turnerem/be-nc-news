@@ -1,6 +1,6 @@
 # Backend for NorthCoders News App
 
-The is the backend for the news app. It handles all the contributing authors and site users, articles and associated comments, for the frontend which can be found [here soon](nowhere).
+The is the backend for the news app. It handles all the contributing authors and site users, articles and associated comments, for the frontend which can be found [here](https://fe-nc-news-4543524.herokuapp.com).
 
 The app is hosted [here](https://whispering-river-81489.herokuapp.com/api) on Heroku. Follow the link for a list of the available endpoints.
 
