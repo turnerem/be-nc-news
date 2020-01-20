@@ -46,13 +46,13 @@ describe('/api', () => {
       })
     })
   })
-  describe.only('/topics', () => {
+  describe('/topics', () => {
     it('GET: 200 returns topics', () => {
       return request(app)
       .get('/api/topics')
       .expect(200)
       .then(({body: {topics_res} = {}}) => {
-        console.log(topics_res)
+       
         const { topics, topic_art_dates } = topics_res;
         expect(topics[0]).to.have.keys('slug', 'description')
         expect(topic_art_dates[0]).to.have.keys('created_at', 'topic')
