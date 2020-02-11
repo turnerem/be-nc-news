@@ -392,7 +392,7 @@ describe('/api', () => {
             .del('/api/comments/1')
             .expect(204)
             .then(({body}) => {
-              // console.log(Object.keys(body), 'this is the body')
+              
               expect(Object.keys(body).length).to.equal(0)
               // expect(comment.votes).to.equal(16)
             })
